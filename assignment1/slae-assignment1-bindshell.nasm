@@ -1,3 +1,9 @@
+;Author: Aaron Weathersby
+;SLAE #1488
+;Handle: t0b0x0r
+;github:https://github.com/t0b0rX0r/slae/upload/master/assignment1
+;Assignment #2- Bind Shell
+;created for completing the requirements of the SecurityTube Linux Assembly Expert certification: http://securitytube-training.com/online-courses/securitytube-linux-assembly-expert
 
 global _start
 
